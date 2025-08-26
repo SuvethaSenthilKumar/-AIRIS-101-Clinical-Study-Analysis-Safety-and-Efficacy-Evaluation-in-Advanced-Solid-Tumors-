@@ -1,0 +1,2 @@
+# -AIRIS-101-Clinical-Study-Analysis-Safety-and-Efficacy-Evaluation-in-Advanced-Solid-Tumors-
+R-based statistical analysis of AIRIS-101 (ORIC-101) in combination with nab-paclitaxel, focusing on safety (TEAEs, labs, vitals, ECG) and efficacy (BOR, PFS, OS) endpoints in a Phase 1b study of advanced solid tumors. This repository includes reproducible R scripts, survival analyses, exposure-adjusted incidence rate EAIR calculations
