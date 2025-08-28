@@ -75,7 +75,7 @@ ae_summary <- Cancer_analysis %>%
   arrange(desc(N))
 
 #INTERPRETATION: Based on the analysis, patients in the treatment arm AIRIS-101 1 experienced a higher incidence of adverse events such as elevated AST, increased bilirubin levels, and severe fatigue.
-#In contrast, patients in the AIRIS-101 2A arm most commonly experienced constipation, diarrhea, and nausea following treatment.
+#In contrast, patients in the AIRIS-101 2A arm most commonly experienced constipation, diarrhea, and nausea following treatment. 
 #visualization using DOTPLOT:
 library(ggplot2)
 
@@ -88,7 +88,7 @@ ggplot(ae_summary, aes(x = reorder(AETERM, -N), y = N, fill=highlight)) +
   geom_text(aes(label = N), vjust = -0.3, size = 3.5) +
   scale_fill_manual(values=c("max"="lightgreen",other="orange"))+
   labs(
-    title = "Adverse Events in AIRIS-101 1 Treatment Arm",
+    title = "Adverse Events in AIRIS-101 Treatment Arm",
     x = "Adverse Event Term",
     y = "Number of Patients"
   ) +
@@ -107,11 +107,47 @@ Cancer_analysis <- Cancer_analysis %>%
 surv_obj <- Surv(time=Cancer_analysis$time_to_ae,event= Cancer_analysis$AE_event)
 
 library(survival)
+library(survminer)   # for nice KM plots
 km_fit<- survfit(surv_obj~ ACTARM,data= Cancer_analysis)
 
-plot(km_fit, col = 1:3, main = "Time to First AE", xlab = "Days", ylab = "Survival Probability")
-legend("bottomleft", legend = levels(factor(Cancer_analysis$ACTARM)), col = 1:3, lty = 1)
-exists("km_fit")
+# --- Build legend labels only for strata present in km_fit ---
+# Get the actual strata names used
+km_strata <- gsub("ACTARM=", "", names(km_fit$strata))
+
+# Count subjects only in those strata
+arm_counts <- Cancer_analysis %>%
+  filter(ACTARM %in% km_strata) %>%
+  group_by(ACTARM) %>%
+  summarise(n = n(), .groups = "drop")
+
+# Create labels in the same order as km_fit$strata
+legend_labels <- paste0(arm_counts$ACTARM, " (n=", arm_counts$n, ")")
+legend_labels <- legend_labels[match(km_strata, arm_counts$ACTARM)]
+
+
+# Median survival per group
+medians <- surv_median(km_fit)
+
+# Print table of medians
+print(medians)
+
+#Plot without automatic median line
+ggsurvplot(
+  km_fit,
+  data = Cancer_analysis,
+  risk.table = TRUE,          # adds number-at-risk below
+  pval = TRUE,                # adds log-rank p-value
+  conf.int = TRUE,            # adds confidence intervals
+  censor.shape = 124,         # censoring marks
+  censor.size = 3,
+  xlab = "Days from First Dose",
+    ylab = "Event-Free Survival Probability",
+  legend.title = "Treatment Arm",
+  legend.labs = legend_labels,
+  title = "Kaplan–Meier Plot: Time to First Adverse Event"
+)
+
+
 
 #to find how many ACTARM contributes to the graph
 levels(factor(Cancer_analysis$ACTARM))
@@ -120,11 +156,11 @@ levels(factor(Cancer_analysis$ACTARM))
 table(Cancer_analysis$ACTARM, !is.na(Cancer_analysis$time_to_ae))
 
 #INTERPRETATION: 
-#The survival propability decreases over time as patients experience their first AE
-#AIRIS 101 (black)-- patients experiences AE's very soon after treatment
+#The survival probability decreases over time as patients experience their first AE
+#AIRIS 101 (Red)-- patients experiences AE's very soon after treatment, as shown by the sharper decline in survival probability
 #AIRIS 101 1-A (Green)-- AE occured more slowly and spread out over time. Indicates moderate safety profile
-#AIRIS 101 2-A (Red)-- patients remained AE free for longer. Fewer and slower AE [Potentially safer profile]
-
+#AIRIS 101 2-A (Blue)-- patients remained AE free for longer. Fewer and slower AE [Potentially safer profile]
+#By around Day 25, survival probability was lowest in AIRIS-101 1, while 1A and 2A maintained higher AE-free rates.
 #ANALYSIS3: Lab Toxicity Grade
 tox_summary<-ADAM_Dataset %>%
   filter(!is.na(ATOXGRL)) %>%
@@ -143,7 +179,6 @@ tox_summary<-ADAM_Dataset %>%
 
 #creating a new variable naming CM_duration from the available CMSTDTC and CMENDTC
 
-
 ADAM_Dataset <- ADAM_Dataset %>%
   mutate(
     CMSTDTC= as.Date(CMSTDTC),
@@ -152,7 +187,7 @@ ADAM_Dataset <- ADAM_Dataset %>%
   )
 
 cm_summary<- ADAM_Dataset %>%
-  filter(!is.na(CMDECOD)) %>%
+  filter(!is.na(CMDECOD),CMDECOD != "NA", CMDECOD != "") %>%
   group_by(CMDECOD,ACTARM) %>%
   summarise(avg_duration=mean(CM_duration,na.rm=TRUE),count=n(),.groups='drop')
 
@@ -163,28 +198,33 @@ cm_max_usage <- cm_summary %>%
   arrange(desc(count))
 
 
-#INTERPRETATION:The most frequently administered concomitant medications alongside the study drug during the clinical trial were NA and Palonosetron Hydrochloride, each taken by 5 patients. 
+#INTERPRETATION:The most frequently administered concomitant medications alongside the study drug during the clinical trial were Palonosetron hydrochloride & Hydromorphone hydrochloride, each taken by 5 patients. 
 #These medications were primarily recorded under the AIRIS-101 2A treatment group.
 
 #VIZUALIZATION- HEAT MAP CORRELATION:
 
 library(ggplot2)
 library(dplyr)
+library(stringr)
 
 # Heatmap of CMDECOD (drug) vs ACTARM (treatment arm)
 cm_summary %>%
   filter(!is.na(CMDECOD), !is.na(ACTARM)) %>%
-  ggplot(aes(x = ACTARM, y = reorder(CMDECOD, count), fill = count)) +
-  geom_tile(color = "white") +
+  ggplot(aes(x = count, y = reorder(CMDECOD, count), fill = count)) +
+  geom_col() +
   scale_fill_gradient(low = "lightblue", high = "red") +
   labs(title = "Drug Usage Count per Treatment Arm",
-       x = "Treatment Arm",
+       x = "Count",
        y = "Drug (CMDECOD)",
        fill = "Count") +
-  facet_wrap(~ ACTARM, scales = "free_x") +
+  facet_wrap(~ ACTARM, ncol = 2, scales = "free_y") +
   theme_minimal() +
-  theme(axis.text.y = element_text(size = 5),
-        strip.text = element_text(size = 10, face = "bold"))
+  theme(
+    axis.text.y = element_text(size = 6),  # keep readable
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) +
+  scale_y_discrete(labels = function(x) str_wrap(x, width = 20))  # wrap long labels
 
 #top 5 drugs per ARM
 
@@ -264,7 +304,7 @@ change_df <- baseline_df %>%
 #INTERPRETATION:
 # From the interpretation, after performing clinical trial there is fluctuation in blood pressure
 #i.e the diastolic pressure has been increased to certain extent which has to be monitored on regular basis as that
-#could flag stage 1 hypertension
+#could flag stage 1 hypertension in AIRIS 101 1 
 
 
 #BSA has been largely dropped while undergoing treatment arm AIRIS 101-2A that strongly suggest
@@ -301,11 +341,13 @@ ggplot(exposure_summary,aes(x= ACTARM,y=average_exposure)) +
   geom_bar(stat="identity",fill="steelblue")+
   geom_errorbar(aes(ymin= average_exposure- sd_exposure,ymax= average_exposure + sd_exposure),
                 width= 0.2,color="black")+
-  geom_text(aes(label= round(average_exposure, 1)),vjust= -0.5,size= 3.5)+
-  labs(title= "Average Exposure Days by Treatment Arm",
-       x= "Treatment Arm", y= "Average Exposure Days")+
+  geom_text(aes(label = paste0(round(average_exposure, 1), " ± ", 
+                               round(sd_exposure, 1))),
+            vjust = -0.5, size = 3.5) +
+  labs(title = "Average Exposure Days by Treatment Arm",
+       x = "Treatment Arm", y = "Average Exposure Days") +
   theme_minimal() +
-  theme(axis.text.x= element_text(angle=45,hjust=1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #Compare exposure days to adverse event by ARM
 
@@ -313,7 +355,7 @@ AE_with_exposuredays <- ADAM_Dataset %>%
   group_by(ACTARM) %>%
   summarise(n_AE = n_distinct(AEDECOD), n_subjects = n_distinct(USUBJID))
 
-#INTERPRETATION: AIRIS-101 1A appears to have the highest AE diversity per subject.
+#INTERPRETATION: AIRIS-101 1A has the longest average exposure(~64days), showing a clear difference fro
 #Now compute EAIR to adjust for how long subjects were exposed to treatment — this gives a fair comparison across treatment arm
 
 AE_perARM <- ADAM_Dataset %>%
@@ -387,7 +429,6 @@ print(tukey_result)
 # Based on the results obtained the overall ranking of exposure days as follows:
 #AIRIS 101 1A > AIRIS 101 2A > AIRIS 101 1
 
-
 #This can be corelated with EAIR, i.e arms with much shorter exposure (AIRIS 101 1) will tend to have inflated EAIR.
 
 #3. REPEATED MEASURES ANOVA/ MIXED EFFECTS MODEL
@@ -431,8 +472,9 @@ ADAM_Dataset <- ADAM_Dataset %>%
 mixed_model <- lmer(AVAL ~ AVISIT_CAT * ACTARM + (1 | USUBJID), data = ADAM_Dataset)
 summary(mixed_model)
 
-#INTERPRETATION: 
-
+#INTERPRETATION:The linear mixed-effects model showed that baseline AVAL was significantly different from zero (Estimate = 68.2, p = 0.011). However, there were no significant differences in AVAL across visit categories, treatment arms, or their interactions. Variability was larger within subjects (SD = 43.1) than between subjects (SD = 27.1). 
+#The lack of significant effects suggests that neither treatment assignment nor visit category had a measurable impact on AVAL in this dataset. 
+#Model estimation also indicated some rank deficiency due to sparse combinations of visit type and treatment arm, which may limit interpretability of interaction effects.
 
 #4.KAPLAN-MEIER LOG-RANK TEST
 #Statistically compares survival curves across arm
@@ -568,20 +610,30 @@ summary(cox_female)
 #8. FREQUENCY BAR CHART FOR TOP 10 MHTERM
 Cancer_analysis <- Cancer_analysis %>% drop_na(MHTERM)
 
-mh_freq <- Cancer_analysis %>%
-  count(MHTERM, sort=TRUE)
-#Top 10 most common medical histories
-top10_mh <- mh_freq %>% slice_max(n,n= 10)
-#Bar chart
+mh_summary <- ADAM_Dataset %>%
+  filter(!is.na(MHTERM), MHTERM != "NA", MHTERM != "") %>%   
+  group_by(MHTERM) %>%
+  summarise(Frequency = n(), .groups = "drop") %>%
+  arrange(desc(Frequency)) %>%
+  slice_head(n = 10) %>%     
+  mutate(Percent = Frequency / sum(Frequency) * 100)
+
+
 # Bar chart
-ggplot(top10_mh, aes(x = reorder(MHTERM, n), y = n)) +
+mh_summary %>%
+  mutate(Percent = Frequency / sum(Frequency) * 100) %>%
+  ggplot(aes(x = reorder(MHTERM, Frequency), y = Frequency)) +
   geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(label = paste0(Frequency, " (", round(Percent, 1), "%)")),
+            hjust = -0.1, size = 3.5) +
   coord_flip() +
-  labs(title = "Top 10 Medical Histories (MHTERM)",
-       x = "Medical History Term",
-       y = "Frequency")
-  
-  
+  labs(
+    title = paste0("Top 10 Medical Histories (MHTERM) (N=", sum(mh_summary$Frequency), " patients)"),
+    x = "Medical History Term",
+    y = "Number of Patients"
+  ) +
+  theme_minimal(base_size = 12)
+                   
 #Categorize MHTERM into body-system level groups
 Cancer_analysis <- Cancer_analysis %>%
   mutate(MH_Category = case_when(
@@ -765,3 +817,4 @@ head(results, 10)
 
 
   
+
