@@ -82,7 +82,8 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - Balanced distribution of baseline medical history across arms  
 - Confirms **successful randomization**  
 
-- [Top 10 Medical History (MH) Observed](AIRIS-101-Clinical-Study-Analysis-Safety/Top 10 MH observed.pdf)  
+
+-[Adverse Events (AEs) in AIRIS-101-1 Treatment Arm](https://github.com/YourUsername/AIRIS-101-Clinical-Study-Analysis-Safety-and-Efficacy-Evaluation-in-Advanced-Solid-Tumors/blob/main/AE_in_AIRIS-101_1_TRTARM.pdf)
 
 ---
 
