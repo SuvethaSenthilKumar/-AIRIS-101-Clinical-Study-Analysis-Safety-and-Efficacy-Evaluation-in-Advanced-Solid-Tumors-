@@ -43,14 +43,14 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - Incidence of treatment-emergent AEs comparable across arms  
 - After multiplicity adjustment, **no AE reached statistical significance**  
 
-[📄 View AE Incidence Report (PDF)](./outputs/AE_incidence.pdf)
+- [Adverse Events (AEs) in AIRIS-101-1 Treatment Arm](path/to/AE_in_AIRIS-101_1_TRTARM.pdf) 
 
 ---
 
 ### 2. Exposure-Adjusted Incidence Rate (EAIR)  
 - EAIR revealed **one arm with disproportionately higher AE burden relative to exposure**  
 
-![EAIR](outputs/EAIR_plot.png)  
+- [Average Exposure Days by Treatment Arm (EAIR Analysis)](path/to/Average_Exposure_days_by_TRTARM.pdf)  
 
 ---
 
@@ -58,7 +58,7 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - Kaplan–Meier curves showed **earlier AE onset in one arm**  
 - Cox model HR suggested increased AE risk, though not statistically significant  
 
-![KM curve](outputs/KM_curve.png)  
+- [Kaplan–Meier Plot: Time to First AE (Survival Analysis)](path/to/Kaplan-Meier_Plot_Time_to_First_AE.pdf)  
 
 ---
 
@@ -66,7 +66,6 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - A few **Grade 3+ abnormalities** observed, but not clustered in a single arm  
 - Vital signs showed **no clinically significant shifts**  
 
-![Lab toxicity](outputs/Lab_toxicity.png)  
 
 ---
 
@@ -74,7 +73,8 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - CM use consistent across arms  
 - Slightly higher **rescue medication use** in one arm  
 
-![CM usage](outputs/CM_heatmap.png)  
+- [Top 5 Most Taken Drugs per Treatment Arm (Concomitant Medications)](path/to/Top5_Most_Taken_Drugs_per_TRTARM.pdf)  
+- [Drug Usage Count per Treatment Arm (Concomitant Medications)](path/to/Drug_Usage_Count_per_TRTARM.pdf)  
 
 ---
 
@@ -82,7 +82,7 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - Balanced distribution of baseline medical history across arms  
 - Confirms **successful randomization**  
 
-![MH distribution](outputs/MH_distribution.png)  
+- [Top 10 Medical History (MH) Observed](path/to/Top_10_MH_observed.pdf)  
 
 ---
 
