@@ -43,7 +43,7 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - Incidence of treatment-emergent AEs comparable across arms  
 - After multiplicity adjustment, **no AE reached statistical significance**  
 
-![AE incidence](outputs/AE_incidence.png)  
+[📄 View AE Incidence Report (PDF)](./outputs/AE_incidence.pdf)
 
 ---
 
