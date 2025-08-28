@@ -87,6 +87,15 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 
 ---
 
+
+- [Top 10 Medical History (MH) Observed](AIRIS-101-Clinical-Study-Analysis-Safety/Top%2010%20MH%20observed.pdf)  
+- [Adverse Events (AEs) in AIRIS-101-1 Treatment Arm](AIRIS-101-Clinical-Study-Analysis-Safety/AE%20in%20AIRIS-101%201%20TRTARM.pdf)  
+- [Kaplan–Meier Plot: Time to First AE (Survival Analysis)](AIRIS-101-Clinical-Study-Analysis-Safety/Kaplan-Meier%20Plot%20Time%20to%20First%20AE.pdf)  
+- [Average Exposure Days by Treatment Arm (EAIR Analysis)](AIRIS-101-Clinical-Study-Analysis-Safety/Average%20Exposure%20days%20by%20TRTARM.pdf)  
+- [Top 5 Most Taken Drugs per Treatment Arm (Concomitant Medications)](AIRIS-101-Clinical-Study-Analysis-Safety/Top%205%20most%20taken%20drugs%20per%20treatment%20Arm.pdf)  
+- [Drug Usage Count per Treatment Arm (Concomitant Medications)](AIRIS-101-Clinical-Study-Analysis-Safety/Drug%20Usage%20Count%20per%20treatment%20arm.pdf)
+
+- 
 ## 🧾 Discussion  
 - **Multiplicity adjustment** reduced apparent AE differences → avoids false positives  
 - **Exposure-adjusted metrics** uncovered hidden differences not visible from raw counts  
