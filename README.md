@@ -5,7 +5,17 @@ This project demonstrates the application of **statistical programming in R** to
 
 Findings suggest **no major safety imbalances**, but trends in **AE timing and rescue medication usage** highlight areas for further monitoring. The project serves as a reproducible framework for clinical data analysis in drug development.  
 
----
+---**Repository Structure ** 
+├── data/ # Example/derived datasets (raw data not shared due to confidentiality)
+├── scripts/ # R analysis scripts
+│ ├── 01_data_preprocessing.R
+│ ├── 02_ae_analysis.R
+│ ├── 03_survival_analysis.R
+│ ├── 04_lab_vitals_analysis.R
+│ ├── 05_cm_analysis.R
+│ ├── 06_mh_analysis.R
+├── outputs/ # Plots, tables, and model outputs
+└── README.md # Documentation & publication-style report
 
 ## 🔬 Methods  
 
