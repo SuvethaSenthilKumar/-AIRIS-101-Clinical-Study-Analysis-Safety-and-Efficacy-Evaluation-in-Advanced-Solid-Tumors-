@@ -82,7 +82,7 @@ Findings suggest **no major safety imbalances**, but trends in **AE timing and r
 - Balanced distribution of baseline medical history across arms  
 - Confirms **successful randomization**  
 
-- [Top 10 Medical History (MH) Observed](path/to/Top_10_MH_observed.pdf)  
+- [Top 10 Medical History (MH) Observed](AIRIS-101-Clinical-Study-Analysis-Safety/Top 10 MH observed.pdf)  
 
 ---
 
